@@ -1,33 +1,43 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-/** Ultra-smooth, infinite-scrolling logos bar (null-safe JS version) */
+/**
+ * Ultra-smooth, infinitely-scrolling logos bar.
+ *
+ * Props:
+ * - height: number (px)          -> tile size (square)
+ * - gap: number (px)             -> spacing between tiles
+ * - speed: number (px/ms)        -> autoplay speed; e.g. 0.12 is slow & smooth
+ * - direction: 'rtl' | 'ltr'     -> scroll direction (default 'rtl')
+ * - logos: string[]              -> list of image URLs
+ * - title?: string               -> optional heading
+ * - subtitle?: string            -> optional subheading
+ * - pauseOnHover?: boolean       -> pause while mouse is over (default true)
+ * - pauseOnFocus?: boolean       -> pause while focused (default true)
+ * - respectReducedMotion?: bool  -> respect OS reduce-motion (default true)
+ * - pauseWhenNotVisible?: bool   -> pause when off-screen/tab hidden (default true)
+ * - edgeFade?: boolean           -> fade masks on edges (default true)
+ * - ariaLabel?: string           -> accessibility label
+ */
 export default function SmoothLogosBar({
   height = 110,
   gap = 18,
   speed = 0.35,
-  logos = [
-    "/leagues/liga.png",
-    "/leagues/Premier_League.png",
-    "/leagues/champions.png",
-    "/leagues/bundesliga.png",
-    "/leagues/formula.png",
-    "/leagues/EFL.png",
-    "/leagues/enfusion.png",
-    "/leagues/ksw.png",
-    "/leagues/ucl.png",
-    "/leagues/2026_FIFA_World_Cup.png",
-    "/leagues/ufc.png",
-  ],
-
-  // NEW (optional) heading/subtitle; defaults to your French text
+  direction = "rtl",
+  logos = [],
   title = "Watch the World’s Biggest Leagues and Tournaments in 4K UHD",
-  subtitle = "Clean and premium, fits a modern streaming platform"
+  subtitle = "Clean and premium, fits a modern streaming platform",
+  pauseOnHover = true,
+  pauseOnFocus = true,
+  respectReducedMotion = true,
+  pauseWhenNotVisible = true,
+  edgeFade = true,
+  ariaLabel = "leagues logos",
 }) {
-  const railRef = useRef(null);
   const wrapRef = useRef(null);
+  const railRef = useRef(null);
   const [playing, setPlaying] = useState(true);
 
-  const state = useRef({
+  const s = useRef({
     x: 0,
     lastTime: 0,
     dragging: false,
@@ -36,26 +46,36 @@ export default function SmoothLogosBar({
     w: 0,
     contentW: 0,
     reduced: false,
+    visible: true,
   });
 
-  const items = [...logos, ...logos];
+  const spd = Math.max(0, Number(speed) || 0);
+  const dir = direction === "ltr" ? 1 : -1;
 
+  const items = useMemo(() => {
+    const list = Array.isArray(logos) ? logos.filter(Boolean) : [];
+    return [...list, ...list];
+  }, [logos]);
+
+  // autoplay loop
   useEffect(() => {
-    const s = state.current;
-    s.reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false;
+    const state = s.current;
+    state.reduced = respectReducedMotion
+      ? (window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches || false)
+      : false;
 
-    const rail = railRef.current;
     const wrap = wrapRef.current;
-    if (!rail || !wrap) return;
+    const rail = railRef.current;
+    if (!wrap || !rail) return;
 
     const measure = () => {
-      s.w = wrap.clientWidth || 0;
-      s.contentW = rail.scrollWidth / 2;
+      state.w = wrap.clientWidth || 0;
+      state.contentW = rail.scrollWidth / 2; // width of one full set
     };
     measure();
 
     let ro;
-    if (typeof ResizeObserver !== "undefined") {
+    if ("ResizeObserver" in window) {
       ro = new ResizeObserver(measure);
       ro.observe(rail);
       ro.observe(wrap);
@@ -63,68 +83,99 @@ export default function SmoothLogosBar({
       window.addEventListener("resize", measure);
     }
 
+    // pause when not visible (intersection)
+    let io;
+    const setVisible = (v) => { state.visible = v; };
+    if (pauseWhenNotVisible && "IntersectionObserver" in window) {
+      io = new IntersectionObserver(
+        (entries) => setVisible(entries[0]?.isIntersecting ?? true),
+        { root: null, threshold: 0.01 }
+      );
+      io.observe(wrap);
+    } else {
+      setVisible(true);
+    }
+
+    // pause when tab is hidden
+    const vis = () => {
+      if (!pauseWhenNotVisible) return;
+      setVisible(document.visibilityState !== "hidden");
+    };
+    document.addEventListener("visibilitychange", vis);
+
     let raf;
     const step = (t) => {
-      if (!playing || s.dragging || s.reduced) {
-        s.lastTime = t;
-        raf = requestAnimationFrame(step);
-        return;
-      }
-      if (!s.lastTime) s.lastTime = t;
-      const dt = t - s.lastTime;
-      s.lastTime = t;
+      const canPlay =
+        playing &&
+        !state.dragging &&
+        !state.reduced &&
+        (pauseWhenNotVisible ? state.visible : true) &&
+        spd > 0;
 
-      s.x -= speed * dt;
-      if (-s.x >= s.contentW) s.x += s.contentW;
-      rail.style.transform = `translateX(${s.x}px)`;
+      if (!state.lastTime) state.lastTime = t;
+
+      if (canPlay) {
+        const dt = t - state.lastTime;
+        state.x += dir * spd * dt; // rtl negative, ltr positive
+        if (state.x <= -state.contentW) state.x += state.contentW;
+        if (state.x >= 0) state.x -= state.contentW;
+        rail.style.transform = `translateX(${state.x}px)`;
+      }
+
+      state.lastTime = t;
       raf = requestAnimationFrame(step);
     };
+
     raf = requestAnimationFrame(step);
 
     return () => {
       cancelAnimationFrame(raf);
-      if (ro) ro.disconnect();
-      else window.removeEventListener("resize", measure);
+      ro?.disconnect?.();
+      io?.disconnect?.();
+      document.removeEventListener("visibilitychange", vis);
+      window.removeEventListener("resize", measure);
     };
-  }, [playing, speed]);
+  }, [playing, spd, dir, respectReducedMotion, pauseWhenNotVisible]);
 
+  // drag / wheel / hover/focus pause
   useEffect(() => {
     const wrap = wrapRef.current;
     const rail = railRef.current;
     if (!wrap || !rail) return;
-    const s = state.current;
+    const state = s.current;
 
     const getX = (e) => (e.touches ? e.touches[0].pageX : e.pageX);
 
     const down = (e) => {
-      s.dragging = true;
+      state.dragging = true;
       setPlaying(false);
-      s.dragStartX = getX(e);
+      state.dragStartX = getX(e);
       const m = /translateX\((-?\d+(\.\d+)?)px\)/.exec(rail.style.transform || "");
-      s.dragStartPos = m ? parseFloat(m[1]) : s.x;
+      state.dragStartPos = m ? parseFloat(m[1]) : state.x;
       rail.classList.add("is-dragging");
     };
 
     const move = (e) => {
-      if (!s.dragging) return;
-      const dx = getX(e) - s.dragStartX;
-      s.x = s.dragStartPos + dx;
-      if (s.x > 0) s.x -= s.contentW;
-      if (s.x < -s.contentW) s.x += s.contentW;
-      rail.style.transform = `translateX(${s.x}px)`;
+      if (!state.dragging) return;
+      const dx = getX(e) - state.dragStartX;
+      state.x = state.dragStartPos + dx;
+      if (state.x > 0) state.x -= state.contentW;
+      if (state.x < -state.contentW) state.x += state.contentW;
+      rail.style.transform = `translateX(${state.x}px)`;
     };
 
     const up = () => {
-      if (!s.dragging) return;
-      s.dragging = false;
+      if (!state.dragging) return;
+      state.dragging = false;
       rail.classList.remove("is-dragging");
       setPlaying(true);
     };
 
     const wheel = (e) => {
+      // vertical scroll => horizontal move
       if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        s.x -= e.deltaY * 0.9;
-        rail.style.transform = `translateX(${s.x}px)`;
+        state.x -= e.deltaY * 0.9;
+        rail.style.transform = `translateX(${state.x}px)`;
         e.preventDefault();
       }
     };
@@ -138,10 +189,15 @@ export default function SmoothLogosBar({
     wrap.addEventListener("touchend", up);
     wrap.addEventListener("wheel", wheel, { passive: false });
 
-    const enter = () => setPlaying(false);
-    const leave = () => setPlaying(true);
+    const enter = () => pauseOnHover && setPlaying(false);
+    const leave = () => pauseOnHover && setPlaying(true);
+    const focus = () => pauseOnFocus && setPlaying(false);
+    const blur = () => pauseOnFocus && setPlaying(true);
+
     wrap.addEventListener("mouseenter", enter);
     wrap.addEventListener("mouseleave", leave);
+    wrap.addEventListener("focusin", focus);
+    wrap.addEventListener("focusout", blur);
 
     return () => {
       wrap.removeEventListener("mousedown", down);
@@ -154,32 +210,83 @@ export default function SmoothLogosBar({
       wrap.removeEventListener("wheel", wheel);
       wrap.removeEventListener("mouseenter", enter);
       wrap.removeEventListener("mouseleave", leave);
+      wrap.removeEventListener("focusin", focus);
+      wrap.removeEventListener("focusout", blur);
     };
-  }, []);
+  }, [pauseOnHover, pauseOnFocus]);
+
+  // fallback label for broken images
+  const labelFromPath = (p) => {
+    try {
+      const base = p.split("/").pop()?.split(".")[0] || "logo";
+      return base.replace(/[_-]/g, " ").toUpperCase().slice(0, 22);
+    } catch {
+      return "LOGO";
+    }
+  };
 
   return (
-    <section className="section smooth-bar purple">
+    <section className="section smooth-bar purple" aria-label={ariaLabel}>
       <div className="container">
-        {/* NEW: heading above the logos */}
-        <div className="smooth-heading">
-          <h3>{title}</h3>
-          <p>{subtitle}</p>
-        </div>
+        {(title || subtitle) && (
+          <div className="smooth-heading">
+            {title && <h3>{title}</h3>}
+            {subtitle && <p>{subtitle}</p>}
+          </div>
+        )}
 
-        <div className="smooth-wrap" ref={wrapRef} style={{ height: height + 20 }}>
-          <div className="smooth-rail" ref={railRef} style={{ gap: `${gap}px` }}>
+        <div
+          className="smooth-wrap"
+          ref={wrapRef}
+          style={{ height: height + 20 }}
+          role="region"
+          aria-roledescription="carousel"
+        >
+          {edgeFade && (
+            <>
+              <div aria-hidden className="smooth-fade-left" />
+              <div aria-hidden className="smooth-fade-right" />
+            </>
+          )}
+
+          <div
+            className="smooth-rail"
+            ref={railRef}
+            style={{ gap: `${gap}px`, willChange: "transform" }}
+          >
             {items.map((src, i) => (
               <div
                 className="league-card square pill"
                 style={{ height, width: height }}
                 key={`${src}-${i}`}
               >
-                <img src={src} alt="league" loading="lazy" />
+                <img
+                  src={src}
+                  alt={labelFromPath(src)}
+                  loading="lazy"
+                  onError={(e) => {
+                    const parent = e.currentTarget.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `<span class="vod-fallback">${labelFromPath(src)}</span>`;
+                    }
+                  }}
+                />
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* small CSS for the fades if you use them */}
+      <style>{`
+        .smooth-wrap { position:relative; overflow:hidden; }
+        .smooth-fade-left,
+        .smooth-fade-right{
+          position:absolute; top:0; bottom:0; width:90px; pointer-events:none; z-index:2;
+        }
+        .smooth-fade-left { left:0;  background:linear-gradient(90deg, #0b1221 35%, rgba(11,18,33,0)); }
+        .smooth-fade-right{ right:0; background:linear-gradient(-90deg, #0b1221 35%, rgba(11,18,33,0)); }
+      `}</style>
     </section>
   );
 }

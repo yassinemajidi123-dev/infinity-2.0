@@ -1,43 +1,39 @@
-export default function WaveDivider({ flip = false }) {
+// src/components/WaveDivider.jsx
+export default function WaveDivider() {
   return (
-    <div className={`wave-divider pro ${flip ? "flip" : ""}`} aria-hidden="true">
-      {/* back wash (very soft, wide) */}
-      <svg className="w back" viewBox="0 0 1440 220" preserveAspectRatio="none">
+    <div className="wave-divider">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1440 320"
+        preserveAspectRatio="none"
+      >
         <defs>
-          <linearGradient id="wd-back" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0"  stopColor="rgba(123,92,255,.18)" />
-            <stop offset="1"  stopColor="rgba(198,179,255,.18)" />
+          <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0e1626" stopOpacity="1" />
+            <stop offset="100%" stopColor="#111a2c" stopOpacity="1" />
           </linearGradient>
         </defs>
-        <path fill="url(#wd-back)" d="M0,120 C280,80 480,160 720,120 C960,80 1160,60 1440,110 L1440,220 L0,220 Z"/>
-      </svg>
 
-      {/* mid wave (main contour) */}
-      <svg className="w mid" viewBox="0 0 1440 180" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="wd-mid" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0"  stopColor="var(--violet-1,#c6b3ff)" />
-            <stop offset=".6" stopColor="var(--violet-2,#7b5cff)" />
-            <stop offset="1"  stopColor="#3846a9" />
-          </linearGradient>
-        </defs>
-        <path fill="url(#wd-mid)" d="M0,110 C220,150 480,60 720,95 C960,130 1200,175 1440,140 L1440,180 L0,180 Z"/>
-      </svg>
+        {/* Back layer */}
+        <path
+          fill="url(#waveGradient)"
+          fillOpacity="0.35"
+          d="M0,200 C360,280 1080,60 1440,180 L1440,320 L0,320 Z"
+        />
 
-      {/* foam highlight + inner shadow */}
-      <svg className="w foam" viewBox="0 0 1440 140" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="wd-foam" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor="rgba(255,255,255,.65)"/>
-            <stop offset="1" stopColor="rgba(255,255,255,0)"/>
-          </linearGradient>
-          <filter id="wd-blur" x="-10%" y="-200%" width="120%" height="500%">
-            <feGaussianBlur stdDeviation="6" />
-          </filter>
-        </defs>
-        {/* a thin crest highlight */}
-        <path filter="url(#wd-blur)" fill="url(#wd-foam)"
-          d="M0,90 C240,120 480,46 720,80 C960,114 1200,150 1440,120 L1440,140 L0,140 Z"/>
+        {/* Middle layer */}
+        <path
+          fill="url(#waveGradient)"
+          fillOpacity="0.55"
+          d="M0,180 C240,240 720,80 1440,200 L1440,320 L0,320 Z"
+        />
+
+        {/* Front layer */}
+        <path
+          fill="url(#waveGradient)"
+          fillOpacity="0.9"
+          d="M0,220 C400,300 1040,100 1440,240 L1440,320 L0,320 Z"
+        />
       </svg>
     </div>
   );

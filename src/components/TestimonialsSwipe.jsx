@@ -1,8 +1,8 @@
 import { useRef } from "react";
 
 export default function TestimonialsSwipe({
-  title = "Commentaires étonnants de nos précieux clients",
-  kicker = "— Nos clients —",
+  title = "Amazing feedback from our valued clients.",
+  kicker = "— Our Clients —",
   images = [
     "/public/LLOGO.png",
     "/testimonials/wa2.jpg",

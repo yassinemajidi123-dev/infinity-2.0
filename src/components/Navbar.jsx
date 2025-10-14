@@ -10,16 +10,15 @@ export default function Navbar() {
             <img
               className="brand-logo"
               src="/logo.png"
-              srcSet="/LLOGO.png 1x, /logo@2x.png 2x" /* optional */
+              srcSet="/LLOGO.png 1x, /logo@2x.png 2x"  /* retina optional */
               alt="INFINITY TV"
             />
           </Link>
-          <Link to="/" className="brand-name">INFINITY TV</Link>
         </div>
 
         {/* Menu */}
         <nav className="menu">
-          <NavLink to="/" end className={({isActive}) => (isActive ? "active" : undefined)}>
+          <NavLink to="/" end className={({ isActive }) => (isActive ? "active" : undefined)}>
             Home
           </NavLink>
 
@@ -27,8 +26,10 @@ export default function Navbar() {
             Packages
           </NavLink>
 
-          {/* Link to the FAQ section on the Home page */}
-          <Link to="/#faq">FAQ</Link>
+          {/* FAQ now points to its own page */}
+          <NavLink to="/faq" className={({ isActive }) => (isActive ? "active" : undefined)}>
+            FAQ
+          </NavLink>
 
           <Link to="/contact" className="btn ghost">Contact</Link>
 

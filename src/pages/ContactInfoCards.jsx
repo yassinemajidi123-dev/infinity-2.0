@@ -12,7 +12,7 @@ export default function ContactInfoCards() {
             </svg>
           </div>
           <h3>Contact us</h3>
-          <p className="ccard-emph">+33 XX XX XX XX</p>
+          <p className="ccard-emph">+44</p>
         </a>
 
         {/* Email */}
@@ -32,7 +32,7 @@ export default function ContactInfoCards() {
         {/* Instagram (replaces 'Notre bureau') */}
         <a
           className="ccard"
-          href="https://instagram.com/YOUR_USERNAME" /* <-- put your IG */
+          href="https://instagram.com/infinity_tv__" /* <-- put your IG */
           target="_blank" rel="noreferrer"
         >
           <div className="ccard-icon">

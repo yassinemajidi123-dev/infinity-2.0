@@ -34,7 +34,7 @@ export default function Hero(){
             </div>
             <div className="item">
               <img src="/icons/samsung.png" alt="Samsung" />
-              <span className="label">SAMSUNG</span>
+              <span className="label">SMART TV</span>
             </div>
             <div className="item">
               <img src="/icons/lg.png" alt="LG Smart" />
