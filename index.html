@@ -2,23 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- viewport-fit=cover for iOS safe areas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
-    <!-- ✅ Tab title -->
     <title>INFINITY TV</title>
 
-    <!-- ✅ Favicon(s) -->
+    <!-- Favicons -->
     <link rel="icon" type="image/png" href="/logoo.png" />
-    <!-- optional extra sizes/formats -->
-    <!-- <link rel="icon" href="/favicon.ico" sizes="any"> -->
-    <!-- <link rel="apple-touch-icon" href="/apple-touch-icon.png"> -->
 
-    <!-- (optional) better share previews -->
+    <!-- Social / theming -->
     <meta property="og:title" content="INFINITY TV" />
     <meta property="og:site_name" content="INFINITY TV" />
     <meta property="og:image" content="/LLOGO.png" />
     <meta name="theme-color" content="#0b1024" />
+
+    <!-- ✅ Load phone-only navbar styles (place file at public/navbar.mobile.css) -->
+    <link rel="stylesheet" href="/navbar.mobile.css" media="(max-width: 900px)" />
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

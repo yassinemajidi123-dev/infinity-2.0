@@ -99,9 +99,7 @@ export default function Contact() {
       >
         <div className="contact-hero-inner container">
           <h1 className="contact-hero-title">Get in Touch with Us</h1>
-          <p className="contact-hero-sub">
-            Our dedicated support team is ready to assist you with any inquiries about Infinity TV services.
-          </p>
+         
         </div>
       </section>
 
@@ -124,7 +122,7 @@ export default function Contact() {
             
             <h3 style={{ marginTop: "1.5rem", fontSize: "1.2em", color: "#78cbffff" }}>Preferred Contact Methods</h3>
             <div className="contact-methods" style={{ fontSize: "0.95em", lineHeight: "1.6" }}>
-              <p><strong>Email:</strong> infinitytv.cont@hotmail.com</p>
+              <p><strong>Email:</strong> infinitytv.cont@hotmail.com</p>  
               <p>Response time: Within 24 hours during business days.</p>
             </div>
 
