@@ -1963,3 +1963,91 @@ button.btn.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
 @media (max-width: 360px) {
   .hero .platforms { grid-template-columns: 1fr !important; }
 }
+/* === MOBILE FOOTER LAYOUT (dark theme, organized like the reference) === */
+@media (max-width: 900px) {
+  /* make the main footer container a 2-col grid */
+  .site-footer .footer-grid{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;   /* two columns */
+    gap: 16px 18px;                   /* row x col gaps */
+    align-items: start;
+  }
+
+  /* BRAND ROW: span full width but show logo left + text right */
+  .site-footer .footer-brand{
+    grid-column: 1 / -1;              /* full row */
+    display: flex;                    /* logo + text side-by-side */
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .site-footer .footer-brand .footer-logo{
+    flex: 0 0 auto;
+    width: 120px;                     /* adjust if needed */
+    height: auto;
+    display: block;
+  }
+  .site-footer .footer-brand p{
+    margin: 0;                        /* tighten copy block */
+    line-height: 1.55;
+    color: rgba(255,255,255,.85);     /* keep dark theme text color */
+  }
+
+  /* LINKS: place the two groups side-by-side in 2 columns */
+  /* support either .footer-group (your dark version) or .footer-links (other variant) */
+  .site-footer .footer-group,
+  .site-footer .footer-links{
+    margin: 0;
+  }
+  .site-footer .footer-group h4,
+  .site-footer .footer-links h4{
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #fff;
+  }
+  .site-footer .footer-group ul,
+  .site-footer .footer-links ul{
+    margin: 0; padding: 0; list-style: none;
+  }
+  .site-footer .footer-group li + li,
+  .site-footer .footer-links li + li{
+    margin-top: 8px;
+  }
+  .site-footer .footer-group a,
+  .site-footer .footer-links a{
+    color: rgba(255,255,255,.85);
+    text-decoration: none;
+  }
+  .site-footer .footer-group a:hover,
+  .site-footer .footer-links a:hover{
+    color: #fff; text-decoration: underline;
+  }
+
+  /* CTA full width under the two link columns */
+  .site-footer .footer-cta{
+    grid-column: 1 / -1;
+    margin-top: 6px;
+  }
+  .site-footer .footer-cta h4{
+    margin: 0 0 8px; color: #fff;
+  }
+  .site-footer .footer-cta p{
+    margin: 0 0 12px; color: rgba(255,255,255,.85);
+  }
+  .site-footer .footer-cta .btn,
+  .site-footer .contact-cta{
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 10px 18px; border-radius: 12px;
+    background: linear-gradient(135deg, #67d1ff, #7e7bff);
+    color: #0b0b1a; font-weight: 800; text-decoration: none;
+  }
+
+  /* copyright spacing a bit tighter */
+  .site-footer .footer-bottom{
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    text-align: center;
+    color: rgba(255,255,255,.65);
+  }
+}
+
