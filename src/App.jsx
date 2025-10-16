@@ -50,8 +50,9 @@ function Home() {
       <ChannelsMarquee />
       <LogosSwipeBar />
       <PromoHero />
-      <StatsCounter />
       <Pricing />
+      <StatsCounter />
+      
       <SmoothLogosBar
         height={140}
         gap={22}

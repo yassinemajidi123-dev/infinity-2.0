@@ -6,7 +6,7 @@ import '../navbar.mobile.css';
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
-  // Lock body scroll on iOS when drawer is open
+  // Lock body scroll on iOS when menu is open
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = open ? 'hidden' : prev || '';
@@ -16,23 +16,22 @@ export default function Navbar() {
   return (
     <header className={`nav nav-purple ${open ? 'is-open' : ''}`}>
       <div className="container nav-wrap">
-        {/* Brand */}
+        {/* Brand (centered on mobile via CSS) */}
         <div className="brand">
-  <Link to="/" className="brand-logo-wrap" aria-label="INFINITY TV — Home">
-    <img
-      className="brand-logo"
-      src="/logo-mobile.png"   // /public/logo-mobile.png
-      width="120"
-      height="24"
-      alt="INFINITY TV"
-      loading="eager"
-      decoding="async"
-    />
-  </Link>
-</div>
+          <Link to="/" className="brand-logo-wrap" aria-label="INFINITY TV — Home">
+            <img
+              className="brand-logo"
+              src="/logo-mobile.png"
+              width="200"
+              height="48"
+              alt="INFINITY TV"
+              loading="eager"
+              decoding="async"
+            />
+          </Link>
+        </div>
 
-
-        {/* Desktop menu (unchanged on desktop) */}
+        {/* Desktop menu (unchanged) */}
         <nav className="menu" role="navigation">
           <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
             Home
@@ -50,7 +49,7 @@ export default function Navbar() {
             Order
           </NavLink>
 
-          {/* Instagram */}
+          {/* Instagram (desktop ok; hidden on phone via CSS if you kept that rule) */}
           <a
             className="social-ig"
             href="https://instagram.com/infinity_tv__"
@@ -68,7 +67,7 @@ export default function Navbar() {
           </a>
         </nav>
 
-        {/* Mobile hamburger (shown on phone via CSS) */}
+        {/* Mobile hamburger */}
         <button
           className="nav-toggle"
           aria-label="Toggle menu"
@@ -80,16 +79,38 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Backdrop & Drawer (only visible on phone via CSS) */}
+      {/* Backdrop */}
       <button className="nav-backdrop" onClick={() => setOpen(false)} aria-hidden={!open} />
-      <nav id="mobile-drawer" className="nav-drawer" onClick={() => setOpen(false)}>
+
+      {/* Mobile drawer */}
+      <nav
+        id="mobile-drawer"
+        className="nav-drawer"
+        onClick={() => setOpen(false)}
+      >
+        {/* Primary */}
         <NavLink to="/" end>Home</NavLink>
         <NavLink to="/packages">Packages</NavLink>
         <NavLink to="/faq">FAQ</NavLink>
-        <Link to="/contact" className="btn ghost">Contact</Link>
-        <NavLink to="/packages" className="btn">Order</NavLink>
-        <a className="social-ig" href="https://instagram.com/infinity_tv__" target="_blank" rel="noreferrer">Instagram</a>
+
+        {/* Simple Contact (no gradient) */}
+        <Link to="/contact" className="btn ghost">Contact us</Link>
+
+        {/* Divider */}
+        <hr className="drawer-sep" />
+
+        {/* Policies */}
+        <div className="drawer-section">
+          <h6 className="drawer-title">Policies</h6>
+          <NavLink className="drawer-link" to="/policies/terms">Terms and Conditions</NavLink>
+          <NavLink className="drawer-link" to="/policies/privacy">Privacy Policy</NavLink>
+          <NavLink className="drawer-link" to="/policies/refund">Refund Policy</NavLink>
+        </div>
+
         <div className="drawer-safe" />
+
+        {/* Copyright */}
+        <div className="drawer-copy">© {new Date().getFullYear()} INFINITY TV</div>
       </nav>
     </header>
   );

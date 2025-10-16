@@ -1913,3 +1913,53 @@ img { max-width: 100%; height: auto; }
     text-align: center;
   }
 }
+button.btn.btn-primary {
+  background: linear-gradient(135deg, #67d1ff, #7e7bff);
+  color: #0b0b1a;
+  border: none;
+  box-shadow: 0 6px 18px rgba(126,123,255,.35);
+}
+button.btn.btn-primary:hover:not(:disabled) { filter: brightness(1.05); }
+button.btn.btn-primary:active:not(:disabled) { transform: translateY(1px); }
+button.btn.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+/* Two platform cards per row on phones (leave desktop unchanged) */
+@media (max-width: 900px) {
+  .hero .platforms {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0 12px;          /* optional side padding */
+  }
+
+  .hero .platforms .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;     /* override any old margins */
+    padding: 12px !important; /* a bit tighter for 2-up */
+    border-radius: 14px;
+  }
+
+  .hero .platforms .item img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 8px;       /* center the badge */
+  }
+
+  .hero .platforms .item .label {
+    font-size: 13px !important;
+    line-height: 1.25;
+    text-align: center;
+    margin: 4px 0 0;
+  }
+}
+
+/* Optional: fall back to one per row on very small phones */
+@media (max-width: 360px) {
+  .hero .platforms { grid-template-columns: 1fr !important; }
+}

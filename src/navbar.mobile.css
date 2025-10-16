@@ -1,127 +1,270 @@
-/* --- PHONE OVERRIDES --- */
+/* --- PHONE OVERRIDES (gradient header always on, centered logo, right toggle -> X, full-width drawer below header) --- */
 @media (max-width: 900px) {
-  /* Fixed, glossy bar + iOS stability */
-  .nav.nav-purple {
+  /* Header (fixed). Define reusable height var. */
+  .nav.nav-purple{
+    --nav-h: calc(58px + env(safe-area-inset-top));
+
     position: fixed;
     top: 0; left: 0; right: 0;
-    z-index: 1000;
-    background: rgba(20,16,52,.92);
-    -webkit-backdrop-filter: saturate(180%) blur(10px);
-    backdrop-filter: saturate(180%) blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,.08);
+    z-index: 3000;
 
-    isolation: isolate;                  /* prevent blending glitches */
-    -webkit-transform: translateZ(0);    /* own GPU layer */
+    /* ✨ Gradient: #f0efeb -> #1e2246 (ALWAYS ON) */
+    background: #f0efeb; /* fallback */
+    background-image: linear-gradient(
+      90deg,
+      #f0efeb 0%,
+      #ecebf0 18%,
+      #3a3f75 64%,
+      #1e2246 100%
+    );
+    color: #0b0b1a;
+    border-bottom: 1px solid rgba(0,0,0,.06);
+
+    -webkit-backdrop-filter: saturate(150%) blur(6px);
+    backdrop-filter: saturate(150%) blur(6px);
+
+    isolation: isolate;
+    -webkit-transform: translateZ(0);
     transform: translateZ(0);
     backface-visibility: hidden;
   }
 
-  /* Push content below fixed bar */
-  body { padding-top: calc(50px + env(safe-area-inset-top)); }
-
-  /* Top row layout, with reserved space for the hamburger */
-  .nav-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    height: calc(50px + env(safe-area-inset-top));
-    padding: calc(8px + env(safe-area-inset-top)) 14px 6px;
-    padding-right: 44px; /* reserve right-side space for the toggle */
+  /* Keep same gradient when open */
+  .nav.nav-purple.is-open{
+    background-image: linear-gradient(
+      90deg,
+      #f0efeb 0%,
+      #ecebf0 18%,
+      #3a3f75 64%,
+      #1e2246 100%
+    );
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
-  /* Hide desktop menu on phone */
-  .nav.nav-purple .menu { display: none !important; }
+  /* Push page below fixed header */
+  body { padding-top: var(--nav-h); }
 
-  /* Logo (small) + anti-flicker */
-  .brand { display: flex; align-items: center; overflow: visible; }
-  .brand-logo-wrap { overflow: visible; }
-  .brand-logo {
-    display: block;
-    height: 40px !important;     /* tweak 18–22px to preference */
-    width: auto;
+  /* Top row; keep room on the right for the toggle */
+  .nav-wrap{
     position: relative;
+    height: var(--nav-h);
+    padding: calc(10px + env(safe-area-inset-top)) 14px 8px;
+    padding-right: 52px; /* space for toggle/X on the right */
+  }
+
+  /* Hide desktop inline menu on phone */
+  .nav.nav-purple .menu{ display: none !important; }
+
+  /* === Centered logo === */
+  .brand{
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center;
     z-index: 1;
+  }
+  .brand-logo-wrap{ overflow: visible; }
+  .brand-logo{
+    display: block;
+    height: 50px !important;   /* tweak to taste (e.g., 44–56px) */
+    width: auto;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.15));
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     will-change: transform;
     image-rendering: -webkit-optimize-contrast;
   }
 
-  /* Hamburger pinned INSIDE the bar on the right */
-  .nav-toggle {
+  /* === Right toggle (hamburger -> crisp X) === */
+  .nav-toggle{
     position: absolute;
-    right: 12px;                 /* adjust spacing from edge */
-    top: 50%;
+    right: 12px; top: 50%;
     transform: translateY(-50%);
-    display: inline-flex !important;
-    flex-direction: column;
-    gap: 4px;
-    appearance: none;
-    background: transparent;
-    border: 0;
-    padding: 10px;               /* comfortable tap target */
-    margin: 0;
-    cursor: pointer;
+    width: 44px; height: 44px;           /* big tap target */
+    padding: 0; margin: 0; border: 0; background: transparent;
+    display: inline-block !important;
   }
-  .nav-toggle span {
-    width: 26px; height: 2px;
-    background: #fff;
+  .nav-toggle span{
+    position: absolute; left: 50%; top: 50%;
+    width: 26px; height: 2.5px;
+    background: #ffffff;                  /* readable on dark side of gradient */
     border-radius: 2px;
-    display: block;
+    transform-origin: center;
+    transition: transform .22s ease, opacity .18s ease;
+  }
+  .nav-toggle span:nth-child(1){ transform: translate(-50%, -6px); }
+  .nav-toggle span:nth-child(2){ transform: translate(-50%,  6px); }
+  .nav-toggle span:nth-child(3){ display: none; } /* not needed */
+
+  .nav.nav-purple.is-open .nav-toggle span:nth-child(1){
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .nav.nav-purple.is-open .nav-toggle span:nth-child(2){
+    transform: translate(-50%, -50%) rotate(-45deg);
   }
 
-  /* Backdrop */
-  .nav-backdrop {
-    position: fixed; inset: 0;
+  /* ===== Drawer/backdrop BELOW the header (full width) ===== */
+  .nav-backdrop{ z-index: 2000; }
+  .nav-drawer  { z-index: 2500; }
+
+  /* Backdrop: start below the header so the bar stays visible */
+  .nav-backdrop{
+    position: fixed;
+    top: var(--nav-h);
+    left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,.45);
     opacity: 0; pointer-events: none;
     transition: opacity .25s ease;
   }
 
-  /* Drawer */
-  .nav-drawer {
-    position: fixed; top: 0; right: 0;
-    height: 100dvh;
-    width: min(86vw, 360px);
-    transform: translate3d(100%,0,0);
+  /* Drawer: full width below header, slides from right */
+  .nav-drawer{
+    position: fixed;
+    top: var(--nav-h);
+    left: 0; right: 0;                     /* full width */
+    height: calc(100dvh - var(--nav-h));   /* fill remaining screen */
+    transform: translateX(100%);           /* off-screen (to the right) */
     transition: transform .28s ease;
-    background: rgba(20,16,52,.96);
+    background: rgba(20,16,52,.96);        /* keep your purple theme inside */
     -webkit-backdrop-filter: saturate(180%) blur(14px);
     backdrop-filter: saturate(180%) blur(14px);
     display: flex; flex-direction: column;
-    padding-top: calc(14px + env(safe-area-inset-top));
+    overflow-y: auto;
+    padding-top: 12px;
   }
+  .nav.nav-purple.is-open .nav-drawer{ transform: translateX(0); }
+  .nav.nav-purple.is-open .nav-backdrop{ opacity: 1; pointer-events: auto; }
 
-  .nav-drawer a {
+  /* Drawer links (spacing + color) */
+  .nav-drawer a{
     display: block;
-    padding: 14px 16px;
+    padding: 14px 14px;
     margin: 4px 10px;
     border-radius: 12px;
     color: #fff;
     text-decoration: none;
     font-weight: 600;
   }
-  .nav-drawer a.active { background: rgba(255,255,255,.12); }
-  .nav-drawer .btn { text-align: center; margin: 6px 10px; }
-  .nav-drawer .btn.ghost {
-    background: transparent;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,.2);
+  .nav-drawer a.active{ background: rgba(255,255,255,.12); }
+
+  /* Optional: section separator + policy block + copyright */
+  .drawer-sep{ height:1px; border:0; margin:10px 10px 8px; background:rgba(255,255,255,.12); }
+  .drawer-section{ padding: 4px 6px 10px; }
+  .drawer-title{
+    margin: 6px 12px 4px;
+    font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
+    color: rgba(255,255,255,.65);
+  }
+  .drawer-link{ display:block; padding:12px 12px; margin:4px 10px; border-radius:12px; color:#fff; text-decoration:none; font-weight:600; }
+  .drawer-link.active{ background: rgba(255,255,255,.12); }
+  .drawer-copy{
+    margin: 10px 12px 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    font-size: 12px; color: rgba(255,255,255,.65);
   }
 
-  .drawer-safe { height: env(safe-area-inset-bottom); }
+  /* Hide Instagram on phone */
+  .nav-drawer a.social-ig,
+  .nav.nav-purple .menu .social-ig{ display: none !important; }
 
-  /* Open state */
-  .nav.nav-purple.is-open .nav-drawer { transform: translate3d(0,0,0); }
-  .nav.nav-purple.is-open .nav-backdrop { opacity: 1; pointer-events: auto; }
+  /* Simple Contact button (no gradient on phone) */
+  .nav-drawer .btn.ghost{
+    background: transparent; color: #fff;
+    border: 1px solid rgba(255,255,255,.25);
+    box-shadow: none;
+  }
+  .nav-drawer .btn.ghost:hover{ background: rgba(255,255,255,.08); }
 }
 
 /* Desktop safety */
-@media (min-width: 901px) {
-  .nav-toggle, .nav-backdrop, .nav-drawer { display: none !important; }
+@media (min-width: 901px){
+  .nav-toggle, .nav-backdrop, .nav-drawer{ display: none !important; }
 }
 
 /* Motion safety */
-@media (prefers-reduced-motion: reduce) {
-  .nav-backdrop, .nav-drawer { transition: none; }
+@media (prefers-reduced-motion: reduce){
+  .nav-backdrop, .nav-drawer{ transition: none; }
 }
+/* === FORCE GRADIENT ALWAYS (even when menu is closed) === */
+@media (max-width: 900px) {
+  header.nav.nav-purple {
+    background: #f0efeb !important; /* fallback */
+    background-image: linear-gradient(
+      90deg,
+      #f0efeb 0%,
+      #ecebf0 18%,
+      #3a3f75 64%,
+      #1e2246 100%
+    ) !important;
+    border-bottom: 1px solid rgba(0,0,0,.06) !important;
+    -webkit-backdrop-filter: saturate(150%) blur(6px) !important;
+    backdrop-filter: saturate(150%) blur(6px) !important;
+  }
+
+  header.nav.nav-purple.is-open {
+    background: #f0efeb !important; /* keep same gradient when open */
+    background-image: linear-gradient(
+      90deg,
+      #f0efeb 0%,
+      #ecebf0 18%,
+      #3a3f75 64%,
+      #1e2246 100%
+    ) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* keep the icon visible on the darker right side */
+  .nav-toggle span { background: #ffffff !important; }
+}
+@media (max-width: 900px) {
+  /* make sure the drawer can push the strip to the bottom */
+  .nav-drawer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* light gray strip like your reference */
+  .drawer-policy-strip {
+    margin-top: auto;                  /* snaps to bottom of drawer */
+    background: #f0efeb;
+    color: #2b2f33;
+    padding: 14px 12px 12px;
+    border-top: 1px solid rgba(0,0,0,.06);
+  }
+
+  /* title inside the strip */
+  .drawer-policy-strip .drawer-title {
+    margin: 0 0 10px;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+
+  /* policy links in the strip: override dark drawer link styles */
+  .drawer-policy-strip .policy-link {
+    display: inline-block;
+    padding: 6px 0;
+    margin-right: 14px;                /* inline with subtle spacing */
+    color: #2b2f33 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .drawer-policy-strip .policy-link:hover {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  /* copyright line */
+  .drawer-policy-strip .drawer-policy-copy {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #666b72;
+  }
+}
+

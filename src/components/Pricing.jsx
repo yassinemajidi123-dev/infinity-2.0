@@ -1,9 +1,11 @@
+import { useEffect, useMemo, useState } from "react";
+
 export default function Pricing() {
   const plans = [
     {
       title: "3 Months",
       badge: "For 1 Screen",
-      price: "€29.99",
+      price: "£25,00",
       highlight: false,
       features: [
         "SD/HD/Full HD/4K quality",
@@ -21,7 +23,7 @@ export default function Pricing() {
     {
       title: "6 Months",
       badge: "For 1 Screen",
-      price: "€39.99",
+      price: "£38.00",
       highlight: false,
       features: [
         "SD/HD/Full HD/4K quality",
@@ -39,7 +41,7 @@ export default function Pricing() {
     {
       title: "1 Year",
       badge: "For 1 Screen",
-      price: "€49.99",
+      price: "£48,00",
       highlight: true, // highlighted like your right-most blue card
       features: [
         "SD/HD/Full HD/4K Quality",
@@ -56,15 +58,38 @@ export default function Pricing() {
     },
   ];
 
+  // detect phone width
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 900px)");
+    const onChange = (e) => setIsMobile(e.matches);
+    setIsMobile(mq.matches);
+    // support older Safari
+    if (mq.addEventListener) mq.addEventListener("change", onChange);
+    else mq.addListener(onChange);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener("change", onChange);
+      else mq.removeListener(onChange);
+    };
+  }, []);
+
+  // reorder ONLY on mobile: 1 Year -> 6 Months -> 3 Months
+  const orderedPlans = useMemo(() => {
+    if (!isMobile) return plans;
+    const order = { "1 Year": 0, "6 Months": 1, "3 Months": 2 };
+    return [...plans].sort(
+      (a, b) => (order[a.title] ?? 99) - (order[b.title] ?? 99)
+    );
+  }, [isMobile, plans]);
+
   return (
     <section id="pricing" className="section pricing-sec">
       <div className="container">
-        <h2 className="pricing-title">— ° Choose the best IPTV subscription plan that suits you ! ° —</h2>
-        <p className="pricing-sub">Your subscription will receive an email</p>
+        <h2 className="pricing-title"> Choose the best IPTV subscription plan that suits you !</h2>
 
         <div className="pricing-grid">
-          {plans.map((p, i) => (
-            <article className={`price-card ${p.highlight ? "is-featured" : ""}`} key={i}>
+          {orderedPlans.map((p, i) => (
+            <article className={`price-card ${p.highlight ? "is-featured" : ""}`} key={`${p.title}-${i}`}>
               <div className="card-top">
                 <h3>{p.title}</h3>
                 <span className="mini-badge">{p.badge}</span>

@@ -43,7 +43,7 @@ export default function StatsCounter() {
   }, []);
 
   const stats = [
-    { label: "SATISFIED CLIENTS",   to: 10435,  icon: "⭐" },
+    { label: "SATISFIED CLIENTS",   to: 4553,  icon: "⭐" },
     { label: "4K MOVIES",           to: 65000,  icon: "▶" },
     { label: "YEARS OF EXPERIENCE", to: 8,      icon: "🌍"  },
   ];
