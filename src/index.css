@@ -2050,4 +2050,32 @@ button.btn.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
     color: rgba(255,255,255,.65);
   }
 }
+/* Free Trial button — Blue (#005095) → Brick (#9b2a25) */
+.btn.trial {
+  background: linear-gradient(135deg, #005095, #9b2a25) !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  border: none;
+  box-shadow: 0 8px 18px rgba(0, 46, 86, 0.25); /* subtle depth */
+}
+
+/* Hover/active/focus states */
+.btn.trial:hover { filter: brightness(1.05); }
+.btn.trial:active { transform: translateY(1px); }
+
+.btn.trial:focus-visible {
+  outline: 0;
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,.6),
+    0 0 0 5px rgba(0,80,149,.6); /* accessible focus ring */
+}
+
+/* Mobile drawer fit */
+@media (max-width: 900px) {
+  .nav-drawer .btn.trial {
+    width: 100%;
+    text-align: center;
+    margin: 6px 10px;
+  }
+}
 
