@@ -2078,4 +2078,17 @@ button.btn.btn-primary:disabled { opacity: .6; cursor: not-allowed; }
     margin: 6px 10px;
   }
 }
+/* Match See Plans spacing if needed */
+.btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+
+/* Free Trial gradient: violet (#7a62fe) → warm gold (#e1ad61) */
+.btn.trial {
+  background: linear-gradient(135deg, #7a62fe, #e1ad61) !important;
+  color: #ffffff !important;
+  font-weight: 800;
+  border: none;
+  box-shadow: 0 8px 18px rgba(122, 98, 254, 0.25);
+}
+.btn.trial:hover { filter: brightness(1.06); }
+.btn.trial:active { transform: translateY(1px); }
 
