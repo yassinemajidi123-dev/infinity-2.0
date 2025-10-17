@@ -31,7 +31,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop menu (unchanged) */}
+        {/* Desktop menu */}
         <nav className="menu" role="navigation">
           <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : undefined)}>
             Home
@@ -45,11 +45,22 @@ export default function Navbar() {
 
           <Link to="/contact" className="btn ghost">Contact</Link>
 
+          {/* ✅ Free Trial (WhatsApp) */}
+          <a
+            className="btn trial"
+            href="https://wa.me/212617678180?text=Hello%20INFINITY%20TV%2C%20I%27d%20like%20a%20free%20trial%20please."
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Start a free trial on WhatsApp"
+          >
+            Free Trial
+          </a>
+
           <NavLink to="/packages" className="btn">
             Order
           </NavLink>
 
-          {/* Instagram (desktop ok; hidden on phone via CSS if you kept that rule) */}
+          {/* Instagram (desktop; hidden on phone via CSS) */}
           <a
             className="social-ig"
             href="https://instagram.com/infinity_tv__"
@@ -93,24 +104,31 @@ export default function Navbar() {
         <NavLink to="/packages">Packages</NavLink>
         <NavLink to="/faq">FAQ</NavLink>
 
+        {/* ✅ Free Trial (WhatsApp) */}
+        <a
+          className="btn trial"
+          href="https://wa.me/212617678180?text=Hello%20INFINITY%20TV%2C%20I%27d%20like%20a%20free%20trial%20please."
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Start a free trial on WhatsApp"
+        >
+          Free Trial
+        </a>
+
         {/* Simple Contact (no gradient) */}
         <Link to="/contact" className="btn ghost">Contact us</Link>
 
-        {/* Divider */}
-        <hr className="drawer-sep" />
+        {/* ---- Light gray POLICIES strip at the very bottom ---- */}
+        <div className="drawer-policy-strip">
+          <h6 className="drawer-title">POLICIES</h6>
+          <Link className="policy-link" to="/policies/terms">Terms and Conditions</Link>
+          <Link className="policy-link" to="/policies/privacy">Privacy Policy</Link>
+          <Link className="policy-link" to="/policies/refund">Refund Policy</Link>
 
-        {/* Policies */}
-        <div className="drawer-section">
-          <h6 className="drawer-title">Policies</h6>
-          <NavLink className="drawer-link" to="/policies/terms">Terms and Conditions</NavLink>
-          <NavLink className="drawer-link" to="/policies/privacy">Privacy Policy</NavLink>
-          <NavLink className="drawer-link" to="/policies/refund">Refund Policy</NavLink>
+          <div className="drawer-policy-copy">
+            © {new Date().getFullYear()} INFINITY TV
+          </div>
         </div>
-
-        <div className="drawer-safe" />
-
-        {/* Copyright */}
-        <div className="drawer-copy">© {new Date().getFullYear()} INFINITY TV</div>
       </nav>
     </header>
   );
